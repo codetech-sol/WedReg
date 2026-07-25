@@ -11,6 +11,7 @@
     "seed": "node backend/database/seed.js",
     "test": "node scripts/smoke-test.js",
     "setup": "npm run migrate && npm run seed",
+    "build": "node scripts/vercel-build.js",
     "vercel-build": "node scripts/vercel-build.js"
   },
   "engines": {

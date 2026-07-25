@@ -1,10 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index" },
-    { "source": "/admin", "destination": "/pages/admin.html" },
-    { "source": "/regulator", "destination": "/pages/regulator.html" },
-    { "source": "/", "destination": "/pages/index.html" }
+    { "source": "/api/(.*)", "destination": "/api/index" }
   ],
   "functions": {
     "api/index.js": {

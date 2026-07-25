@@ -213,9 +213,9 @@ DATABASE_URL="postgresql://...pooler.supabase.com:6543/postgres" npm run migrate
 
 1. Push the project to a GitHub repository.
 2. In [vercel.com](https://vercel.com): **Add New → Project → Import** the repo.
-   The `vercel-build` script copies `frontend/` into `public/` (required because
-   Vercel ignores `express.static`). `vercel.json` then serves pages from the
-   CDN and routes only `/api/*` to the serverless function.
+   On every deploy, `npm run build` copies `frontend/` into `public/` (required
+   because Vercel ignores `express.static`). Only `/api/*` hits the serverless
+   function; pages and assets are served from the CDN.
 3. Under **Environment Variables**, add:
    - `DATABASE_URL` — the Supabase transaction-pooler string
    - `SESSION_SECRET` — long random string
