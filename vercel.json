@@ -1,9 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/admin", "destination": "/pages/admin.html" },
+    { "source": "/regulator", "destination": "/pages/regulator.html" },
+    { "source": "/", "destination": "/pages/index.html" }
+  ],
   "functions": {
     "api/index.js": {
-      "includeFiles": "frontend/**",
       "maxDuration": 15
     }
   }

@@ -28,7 +28,10 @@ function setLoading(btn, loading) {
   const { authenticated } = await api('/api/regulator/session');
   if (authenticated) enterScanner();
   else loginView.hidden = false;
-})().catch(() => toast('Could not reach the server.', 'error'));
+})().catch(() => {
+  loginView.hidden = false;
+  toast('Could not reach the server.', 'error');
+});
 
 const loginBtn = document.getElementById('login-btn');
 document.getElementById('login-form').addEventListener('submit', async (event) => {

@@ -37,7 +37,10 @@ function formatDate(value) {
   const { authenticated } = await api('/api/admin/session');
   if (authenticated) enterDashboard();
   else loginView.hidden = false;
-})().catch(() => toast('Could not reach the server.', 'error'));
+})().catch(() => {
+  loginView.hidden = false;
+  toast('Could not reach the server.', 'error');
+});
 
 /* ------------------------------------------------------------------ */
 /* Login / logout                                                       */

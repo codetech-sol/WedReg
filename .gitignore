@@ -2,5 +2,6 @@ node_modules/
 .env
 .pgdata/
 .vercel
+public/
 backend/database/data/
 *.log
