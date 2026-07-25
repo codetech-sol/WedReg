@@ -175,7 +175,7 @@ legend {
 
 /* ---------- Print: only the confirmation ---------- */
 @media print {
-  .theme-toggle, .page-footer, #print-btn { display: none !important; }
+  .top-bar, .theme-toggle, .page-footer, #print-btn { display: none !important; }
   body { background: #fff !important; }
   .card { box-shadow: none; border: 1px solid #ddd; }
 }

@@ -192,6 +192,55 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; }
 @keyframes toastOut { to { opacity: 0; transform: translateY(10px); } }
 @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
+/* ---------- Top bar (guest landing: staff links + theme) ---------- */
+.top-bar {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.top-bar-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-soft);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.15s;
+}
+.top-bar-link:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  transform: translateY(-1px);
+}
+.top-bar-link:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+.top-bar .theme-toggle { position: static; }
+
+@media (max-width: 480px) {
+  .top-bar { gap: 0.35rem; }
+  .top-bar-link {
+    height: 38px;
+    padding: 0 0.75rem;
+    font-size: 0.78rem;
+  }
+}
+
 /* ---------- Theme toggle ---------- */
 .theme-toggle {
   position: fixed;
