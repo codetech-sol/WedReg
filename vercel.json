@@ -1,8 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index" }
+  ],
+  "redirects": [
+    { "source": "/admin", "destination": "/admin.html", "permanent": false },
+    { "source": "/regulator", "destination": "/regulator.html", "permanent": false }
   ],
   "functions": {
     "api/index.js": {

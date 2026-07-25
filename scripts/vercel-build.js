@@ -1,9 +1,10 @@
 /**
- * Vercel build step — copy the frontend into /public so Vercel's CDN
- * can serve HTML/CSS/JS. (express.static is ignored on Vercel.)
+ * Vercel build — publish frontend as static files in /public.
  *
- * Also copies key pages to the public root so /, /admin, and /regulator
- * resolve without fragile rewrites.
+ * Creates THREE URL patterns for admin/regulator so routing always works:
+ *   /admin.html          (direct file)
+ *   /admin/index.html    (directory index → /admin/)
+ *   cleanUrls + redirects in vercel.json map /admin → admin.html
  */
 const fs = require('fs');
 const path = require('path');
@@ -18,6 +19,20 @@ function copyDir(src, dest) {
   }
 }
 
+function publishPage(publicDir, pagesDir, name) {
+  const src = path.join(pagesDir, `${name}.html`);
+  if (name === 'index') {
+    fs.copyFileSync(src, path.join(publicDir, 'index.html'));
+    return;
+  }
+  // /admin.html and /regulator.html
+  fs.copyFileSync(src, path.join(publicDir, `${name}.html`));
+  // /admin/ and /regulator/ via index.html inside a folder
+  const dir = path.join(publicDir, name);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.copyFileSync(src, path.join(dir, 'index.html'));
+}
+
 const root = path.join(__dirname, '..');
 const publicDir = path.join(root, 'public');
 const frontendDir = path.join(root, 'frontend');
@@ -26,14 +41,9 @@ const pagesDir = path.join(frontendDir, 'pages');
 fs.rmSync(publicDir, { recursive: true, force: true });
 copyDir(frontendDir, publicDir);
 
-// Root-level HTML so Vercel serves /, /admin, /regulator directly.
-const rootPages = [
-  ['index.html', 'index.html'],
-  ['admin.html', 'admin.html'],
-  ['regulator.html', 'regulator.html'],
-];
-for (const [src, dest] of rootPages) {
-  fs.copyFileSync(path.join(pagesDir, src), path.join(publicDir, dest));
-}
+publishPage(publicDir, pagesDir, 'index');
+publishPage(publicDir, pagesDir, 'admin');
+publishPage(publicDir, pagesDir, 'regulator');
 
-console.log('✔ Built public/ for Vercel (frontend + root HTML pages)');
+console.log('✔ Built public/ for Vercel');
+console.log('  Pages: /  /admin.html  /admin/  /regulator.html  /regulator/');

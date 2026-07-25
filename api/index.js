@@ -1,6 +1,5 @@
 /**
- * Vercel serverless entry point.
- * All routes are rewritten here (see vercel.json); the Express app handles
- * routing, static assets, and the API exactly as it does locally.
+ * Vercel serverless entry — API routes ONLY.
+ * HTML pages are static files in /public (built by npm run build).
  */
-module.exports = require('../backend/server');
+module.exports = require('../backend/apiApp');
