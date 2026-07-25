@@ -1,0 +1,185 @@
+/* Guest-facing pages: verification card, registration form, success screen. */
+
+.stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+  padding: 2rem 1rem;
+}
+
+.panel {
+  width: min(560px, 100%);
+  padding: 3rem 2.5rem;
+  text-align: center;
+  animation: panelIn 0.5s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.panel[hidden] { display: none; }
+
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+.ornament {
+  font-size: 1.8rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.panel h1 {
+  font-size: clamp(2rem, 5vw, 2.7rem);
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  color: var(--text-soft);
+  margin: 0.7rem 0 2rem;
+  font-size: 1.05rem;
+  font-weight: 300;
+}
+
+.code-input {
+  text-align: center;
+  font-size: 1.15rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.btn-block { width: 100%; margin-top: 0.5rem; }
+
+.optional {
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--text-soft);
+}
+
+/* ---------- Fieldsets ---------- */
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 1.6rem;
+  text-align: left;
+}
+legend {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--primary);
+  padding: 0;
+  margin-bottom: 1rem;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+}
+
+/* ---------- Plus one ---------- */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  cursor: pointer;
+  padding: 0.9rem 1.1rem;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+  user-select: none;
+}
+.checkbox-row:hover { border-color: var(--primary); }
+.checkbox-row input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.plus-one-fields {
+  overflow: hidden;
+  animation: expandIn 0.35s ease;
+  padding-top: 0.3rem;
+}
+.plus-one-fields[hidden] { display: none; }
+
+@keyframes expandIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Success screen ---------- */
+.checkmark-wrap { margin-bottom: 1.2rem; }
+
+.checkmark {
+  width: 84px;
+  height: 84px;
+  stroke: var(--success);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.checkmark-circle {
+  stroke-dasharray: 160;
+  stroke-dashoffset: 160;
+  animation: draw 0.7s ease forwards;
+}
+.checkmark-check {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: draw 0.45s 0.6s ease forwards;
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* ---------- QR entry ticket ---------- */
+.qr-ticket {
+  margin: 0 auto 1.6rem;
+  padding: 1.2rem 1.2rem 0.9rem;
+  background: #fff;
+  border: 1.5px dashed var(--accent);
+  border-radius: var(--radius-sm);
+  width: fit-content;
+  animation: fadeSlideIn 0.5s 0.9s ease both;
+}
+.qr-ticket[hidden] { display: none; }
+.qr-ticket img { display: block; margin: 0 auto; }
+.qr-note {
+  margin: 0.7rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  max-width: 240px;
+}
+[data-theme='dark'] .qr-note { color: #6b5d59; }
+
+.confirmation {
+  margin: 0 0 1.6rem;
+  padding: 1.1rem 1.3rem;
+  background: var(--success-soft);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.95rem;
+  text-align: left;
+}
+.confirmation:empty { display: none; }
+.confirmation dt { font-weight: 600; color: var(--text-soft); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.confirmation dd { margin: 0 0 0.6rem; }
+.confirmation dd:last-child { margin-bottom: 0; }
+
+.page-footer {
+  text-align: center;
+  padding: 1rem;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+
+/* ---------- Print: only the confirmation ---------- */
+@media print {
+  .theme-toggle, .page-footer, #print-btn { display: none !important; }
+  body { background: #fff !important; }
+  .card { box-shadow: none; border: 1px solid #ddd; }
+}
+
+@media (max-width: 480px) {
+  .panel { padding: 2.2rem 1.4rem; }
+}

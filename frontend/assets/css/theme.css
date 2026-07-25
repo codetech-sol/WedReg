@@ -1,0 +1,223 @@
+/* ==========================================================================
+   Shared wedding theme — soft palette, typography, and base components.
+   Dark mode is driven by [data-theme="dark"] on <html>.
+   ========================================================================== */
+
+:root {
+  --bg: #faf6f2;
+  --bg-gradient: radial-gradient(ellipse at top, #fdf3ee 0%, #faf6f2 55%, #f4ece6 100%);
+  --surface: #ffffff;
+  --surface-2: #fdf8f5;
+  --text: #3d3230;
+  --text-soft: #8a7a75;
+  --primary: #9d5c63;
+  --primary-hover: #86474e;
+  --primary-soft: #f3e2e4;
+  --accent: #b98d6f;
+  --border: #eadfd8;
+  --danger: #b3453f;
+  --danger-soft: #fbeceb;
+  --success: #4e7d5b;
+  --success-soft: #e9f3ec;
+  --shadow: 0 20px 50px -18px rgba(120, 80, 80, 0.25);
+  --shadow-sm: 0 6px 18px -8px rgba(120, 80, 80, 0.2);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Jost', 'Segoe UI', system-ui, sans-serif;
+}
+
+[data-theme='dark'] {
+  --bg: #201b1c;
+  --bg-gradient: radial-gradient(ellipse at top, #2b2224 0%, #201b1c 55%, #1a1516 100%);
+  --surface: #2b2426;
+  --surface-2: #332b2d;
+  --text: #f0e7e4;
+  --text-soft: #b3a29e;
+  --primary: #d69aa1;
+  --primary-hover: #e2adb3;
+  --primary-soft: #453337;
+  --accent: #cfa585;
+  --border: #443a3c;
+  --danger: #e08a84;
+  --danger-soft: #46312f;
+  --success: #92c2a1;
+  --success-soft: #2e3d33;
+  --shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.55);
+  --shadow-sm: 0 6px 18px -8px rgba(0, 0, 0, 0.45);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease, opacity 0.2s;
+}
+.btn:focus-visible { outline: 3px solid var(--primary-soft); outline-offset: 2px; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+
+.btn-primary { background: var(--primary); color: #fff; box-shadow: var(--shadow-sm); }
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); }
+[data-theme='dark'] .btn-primary { color: #241a1c; }
+
+.btn-ghost { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
+.btn-ghost:hover:not(:disabled) { background: var(--primary-soft); transform: translateY(-1px); }
+
+.btn-danger { background: transparent; color: var(--danger); border: 1.5px solid var(--danger); }
+.btn-danger:hover:not(:disabled) { background: var(--danger-soft); transform: translateY(-1px); }
+
+.btn-sm { padding: 0.45rem 1.1rem; font-size: 0.88rem; }
+
+/* ---------- Form controls ---------- */
+.field { margin-bottom: 1.15rem; text-align: left; }
+.field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 0.4rem;
+}
+.field .required::after { content: ' *'; color: var(--primary); }
+
+.input {
+  width: 100%;
+  padding: 0.85rem 1.1rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.3s;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-soft);
+}
+.input[aria-invalid='true'] { border-color: var(--danger); }
+
+.field-error {
+  display: none;
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--danger);
+}
+.field-error.visible { display: block; animation: fadeSlideIn 0.25s ease; }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+/* ---------- Spinner ---------- */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+.btn.loading .spinner { display: inline-block; }
+.btn.loading .btn-label { opacity: 0.75; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Toasts ---------- */
+#toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  z-index: 1000;
+  width: min(420px, calc(100vw - 2rem));
+}
+.toast {
+  padding: 0.9rem 1.2rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  box-shadow: var(--shadow-sm);
+  font-size: 0.95rem;
+  animation: toastIn 0.3s cubic-bezier(0.21, 1.02, 0.73, 1);
+}
+.toast.success { border-left-color: var(--success); }
+.toast.error { border-left-color: var(--danger); }
+.toast.leaving { animation: toastOut 0.25s ease forwards; }
+
+@keyframes toastIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(10px); } }
+@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Theme toggle ---------- */
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s;
+}
+.theme-toggle:hover { transform: rotate(15deg) scale(1.05); }
+
+/* ---------- Utility ---------- */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

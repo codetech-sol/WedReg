@@ -1,0 +1,6 @@
+node_modules/
+.env
+.pgdata/
+.vercel
+backend/database/data/
+*.log

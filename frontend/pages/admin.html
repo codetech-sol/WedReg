@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard · Wedding Registration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/theme.css" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+</head>
+<body>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">☾</button>
+
+  <!-- ================= Login ================= -->
+  <div class="login-stage" id="login-view" hidden>
+    <section class="card login-card" aria-labelledby="login-title">
+      <div class="ornament" aria-hidden="true">❦</div>
+      <h1 id="login-title">Admin Dashboard</h1>
+      <p class="subtitle">Sign in to manage invitations and registrations.</p>
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="username">Username</label>
+          <input class="input" id="username" name="username" type="text" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input class="input" id="password" name="password" type="password" autocomplete="current-password" required />
+        </div>
+        <button class="btn btn-primary btn-block" id="login-btn" type="submit">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-label">Sign In</span>
+        </button>
+      </form>
+    </section>
+  </div>
+
+  <!-- ================= Dashboard ================= -->
+  <div class="dashboard" id="dashboard-view" hidden>
+    <header class="dash-header">
+      <div>
+        <h1>Wedding Admin</h1>
+        <p class="subtitle">Guest registration overview</p>
+      </div>
+      <div class="dash-actions">
+        <a class="btn btn-primary btn-sm" href="/api/admin/export" id="export-btn" download>⬇ Export to Excel</a>
+        <button class="btn btn-ghost btn-sm" id="logout-btn" type="button">Sign Out</button>
+      </div>
+    </header>
+
+    <!-- Statistics -->
+    <section class="stats-grid" id="stats-grid" aria-label="Statistics"></section>
+
+    <!-- Generate codes -->
+    <section class="card panel-block" aria-labelledby="generate-title">
+      <h2 id="generate-title">Generate Invitation Codes</h2>
+      <form class="generate-form" id="generate-form">
+        <div class="field inline">
+          <label for="gen-name">Guest name / label</label>
+          <input class="input" id="gen-name" type="text" placeholder="e.g. Family Table 4" maxlength="120" />
+        </div>
+        <div class="field inline narrow">
+          <label for="gen-count">Count</label>
+          <input class="input" id="gen-count" type="number" min="1" max="500" value="1" />
+        </div>
+        <button class="btn btn-primary btn-sm" id="generate-btn" type="submit">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-label">Generate</span>
+        </button>
+      </form>
+      <div class="generated-codes" id="generated-codes" hidden></div>
+    </section>
+
+    <!-- Tabs -->
+    <nav class="tabs" role="tablist">
+      <button class="tab active" role="tab" aria-selected="true" data-tab="invitations" id="tab-invitations">Invitations</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="registrations" id="tab-registrations">Registrations</button>
+    </nav>
+
+    <!-- Invitations table -->
+    <section class="card panel-block table-panel" id="view-invitations" role="tabpanel" aria-labelledby="tab-invitations">
+      <div class="table-toolbar">
+        <input class="input search" id="inv-search" type="search" placeholder="Search invitation code…" aria-label="Search invitations" />
+        <select class="input select" id="inv-status" aria-label="Filter by status">
+          <option value="">All statuses</option>
+          <option value="unused">Unused</option>
+          <option value="used">Used</option>
+        </select>
+        <button class="btn btn-danger btn-sm" id="inv-delete-all" type="button">Delete All Invitations</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-sort="invitation_code" class="sortable">Invitation Code</th>
+              <th data-sort="status" class="sortable">Status</th>
+              <th data-sort="created_at" class="sortable">Date Created</th>
+              <th data-sort="used_at" class="sortable">Date Used</th>
+            </tr>
+          </thead>
+          <tbody id="inv-tbody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="inv-pagination"></div>
+    </section>
+
+    <!-- Registrations table -->
+    <section class="card panel-block table-panel" id="view-registrations" role="tabpanel" aria-labelledby="tab-registrations" hidden>
+      <div class="table-toolbar">
+        <input class="input search" id="reg-search" type="search" placeholder="Search name, email or code…" aria-label="Search registrations" />
+        <select class="input select" id="reg-plusone" aria-label="Filter by plus one">
+          <option value="">All guests</option>
+          <option value="1">With plus one</option>
+          <option value="0">Without plus one</option>
+        </select>
+        <button class="btn btn-danger btn-sm" id="reg-delete-all" type="button">Delete All Registrations</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-sort="guest_name" class="sortable">Guest Name</th>
+              <th data-sort="guest_email" class="sortable">Email</th>
+              <th>Phone</th>
+              <th data-sort="invitation_code" class="sortable">Invitation Code</th>
+              <th>Plus One</th>
+              <th>Plus One Phone</th>
+              <th>Plus One ID</th>
+              <th data-sort="registered_at" class="sortable">Registered At</th>
+            </tr>
+          </thead>
+          <tbody id="reg-tbody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="reg-pagination"></div>
+    </section>
+  </div>
+
+  <script type="module" src="/assets/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Our Wedding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/theme.css" />
+  <link rel="stylesheet" href="/assets/css/guest.css" />
+</head>
+<body>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">☾</button>
+
+  <main class="stage" id="stage">
+
+    <!-- ============ STEP 1: Invitation code verification ============ -->
+    <section class="card panel active" id="panel-verify" aria-labelledby="verify-title">
+      <div class="ornament" aria-hidden="true">❦</div>
+      <h1 id="verify-title">Welcome to Our Wedding</h1>
+      <p class="subtitle">Please enter your invitation code.</p>
+
+      <form id="verify-form" novalidate>
+        <div class="field">
+          <label for="code" class="visually-hidden">Invitation Code</label>
+          <input class="input code-input" id="code" name="code" type="text"
+                 placeholder="e.g. WED-XXXX-XXXX" autocomplete="off"
+                 autocapitalize="characters" spellcheck="false" maxlength="40" required />
+          <p class="field-error" id="code-error" role="alert"></p>
+        </div>
+        <button class="btn btn-primary btn-block" id="verify-btn" type="submit">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-label">Continue</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- ============ STEP 2: Registration form ============ -->
+    <section class="card panel" id="panel-form" aria-labelledby="form-title" hidden>
+      <div class="ornament" aria-hidden="true">❦</div>
+      <h1 id="form-title">You're Invited!</h1>
+      <p class="subtitle" id="greeting">Please complete your registration below.</p>
+
+      <form id="registration-form" novalidate>
+        <fieldset>
+          <legend>Your Details</legend>
+
+          <div class="field">
+            <label for="guestName" class="required">Full Name</label>
+            <input class="input" id="guestName" name="guestName" type="text"
+                   autocomplete="name" maxlength="120" required />
+            <p class="field-error" id="guestName-error" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="guestEmail" class="required">Email Address</label>
+            <input class="input" id="guestEmail" name="guestEmail" type="email"
+                   autocomplete="email" maxlength="200" required />
+            <p class="field-error" id="guestEmail-error" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="guestPhone">Phone Number <span class="optional">(optional)</span></label>
+            <input class="input" id="guestPhone" name="guestPhone" type="tel"
+                   autocomplete="tel" maxlength="20" />
+            <p class="field-error" id="guestPhone-error" role="alert"></p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Plus One</legend>
+
+          <label class="checkbox-row" for="hasPlusOne">
+            <input type="checkbox" id="hasPlusOne" name="hasPlusOne" />
+            <span>I will be bringing a Plus One</span>
+          </label>
+
+          <div class="plus-one-fields" id="plus-one-fields" hidden>
+            <div class="field">
+              <label for="plusOneName" class="required">Plus-One Full Name</label>
+              <input class="input" id="plusOneName" name="plusOneName" type="text" maxlength="120" />
+              <p class="field-error" id="plusOneName-error" role="alert"></p>
+            </div>
+
+            <div class="field">
+              <label for="plusOnePhone">Phone Number <span class="optional">(optional)</span></label>
+              <input class="input" id="plusOnePhone" name="plusOnePhone" type="tel" maxlength="20" />
+              <p class="field-error" id="plusOnePhone-error" role="alert"></p>
+            </div>
+
+            <div class="field">
+              <label for="plusOneId" class="required">National ID / Passport Number</label>
+              <input class="input" id="plusOneId" name="plusOneId" type="text" maxlength="40" />
+              <p class="field-error" id="plusOneId-error" role="alert"></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <button class="btn btn-primary btn-block" id="submit-btn" type="submit">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-label">Complete Registration</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- ============ STEP 3: Success ============ -->
+    <section class="card panel success-panel" id="panel-success" aria-labelledby="success-title" hidden>
+      <div class="checkmark-wrap" aria-hidden="true">
+        <svg class="checkmark" viewBox="0 0 52 52">
+          <circle class="checkmark-circle" cx="26" cy="26" r="24" fill="none" />
+          <path class="checkmark-check" fill="none" d="M14 27l8 8 16-17" />
+        </svg>
+      </div>
+      <h1 id="success-title">Thank you!</h1>
+      <p class="subtitle">Your registration has been received successfully.<br />
+        We look forward to celebrating with you!</p>
+      <div class="qr-ticket" id="qr-ticket" hidden>
+        <img id="qr-image" alt="Your entry QR code" width="220" height="220" />
+        <p class="qr-note">Present this QR code at the entrance on the day of the wedding.</p>
+      </div>
+      <div class="confirmation" id="confirmation"></div>
+      <button class="btn btn-ghost" id="print-btn" type="button">Print Confirmation</button>
+    </section>
+
+  </main>
+
+  <footer class="page-footer">With love · Wedding Guest Registration</footer>
+
+  <script type="module" src="/assets/js/guest.js"></script>
+</body>
+</html>

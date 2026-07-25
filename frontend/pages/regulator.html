@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Regulator · Guest Check-In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/theme.css" />
+  <link rel="stylesheet" href="/assets/css/regulator.css" />
+</head>
+<body>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">☾</button>
+
+  <!-- ================= Login ================= -->
+  <div class="login-stage" id="login-view" hidden>
+    <section class="card login-card" aria-labelledby="login-title">
+      <div class="ornament" aria-hidden="true">❦</div>
+      <h1 id="login-title">Guest Check-In</h1>
+      <p class="subtitle">Enter the regulator access password to start scanning.</p>
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="password">Access Password</label>
+          <input class="input" id="password" type="password" autocomplete="current-password" required />
+        </div>
+        <button class="btn btn-primary btn-block" id="login-btn" type="submit">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-label">Start Scanning</span>
+        </button>
+      </form>
+    </section>
+  </div>
+
+  <!-- ================= Scanner ================= -->
+  <div class="scanner-stage" id="scanner-view" hidden>
+    <header class="scan-header">
+      <h1>Guest Check-In</h1>
+      <p class="subtitle">Point the camera at a guest's confirmation QR code.</p>
+    </header>
+
+    <div class="scan-layout">
+      <section class="card camera-card">
+        <div class="camera-frame" id="camera-frame">
+          <video id="camera" autoplay playsinline muted></video>
+          <div class="scan-reticle" aria-hidden="true"></div>
+          <p class="camera-fallback" id="camera-error" hidden></p>
+        </div>
+        <p class="scan-hint" id="scan-hint">Waiting for a QR code…</p>
+      </section>
+
+      <section class="card result-card" id="result-card" aria-live="assertive">
+        <div class="result-idle" id="result-idle">
+          <div class="result-icon" aria-hidden="true">▣</div>
+          <p>Scan a code to verify a guest.</p>
+        </div>
+
+        <div class="result-body" id="result-body" hidden>
+          <div class="result-icon" id="result-icon" aria-hidden="true"></div>
+          <h2 id="result-title"></h2>
+          <p id="result-reason"></p>
+          <dl class="guest-details" id="guest-details"></dl>
+          <button class="btn btn-primary" id="next-btn" type="button">Scan Next Guest</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Manual fallback when a QR won't scan -->
+    <section class="card manual-card">
+      <h2>Manual lookup</h2>
+      <p class="subtitle">QR won't scan? Enter the guest's invitation code instead.</p>
+      <form class="manual-form" id="manual-form">
+        <input class="input" id="manual-code" type="text" placeholder="e.g. WED-XXXX-XXXX"
+               autocapitalize="characters" spellcheck="false" maxlength="40" />
+        <button class="btn btn-ghost" id="manual-btn" type="submit">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-label">Verify</span>
+        </button>
+      </form>
+    </section>
+  </div>
+
+  <script src="/vendor/jsQR.js"></script>
+  <script type="module" src="/assets/js/regulator.js"></script>
+</body>
+</html>

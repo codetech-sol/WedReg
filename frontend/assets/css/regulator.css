@@ -1,0 +1,128 @@
+/* Regulator (door check-in) dashboard. The whole page tints green or red
+   after each scan so staff can read the outcome at a glance. */
+
+.login-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+.login-stage[hidden], .scanner-stage[hidden] { display: none; }
+
+.login-card { width: min(420px, 100%); padding: 2.8rem 2.4rem; text-align: center; }
+.ornament { font-size: 1.6rem; color: var(--accent); margin-bottom: 0.4rem; }
+.subtitle { color: var(--text-soft); margin: 0.5rem 0 1.4rem; font-weight: 300; }
+.btn-block { width: 100%; }
+
+/* ---------- Page verdict tint ---------- */
+body { transition: background-color 0.35s ease; }
+body.verdict-match { background: #dff0e4; background-image: none; }
+body.verdict-mismatch { background: #f7dedc; background-image: none; }
+[data-theme='dark'] body.verdict-match { background: #1e3226; }
+[data-theme='dark'] body.verdict-mismatch { background: #3d2220; }
+
+/* ---------- Layout ---------- */
+.scanner-stage { max-width: 980px; margin: 0 auto; padding: 2rem 1.2rem 3rem; }
+.scan-header { text-align: center; margin-bottom: 1.4rem; }
+.scan-header h1 { font-size: 2.2rem; }
+
+.scan-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+@media (max-width: 760px) { .scan-layout { grid-template-columns: 1fr; } }
+
+/* ---------- Camera ---------- */
+.camera-card { padding: 1rem; }
+.camera-frame {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: #17110f;
+}
+.camera-frame video { width: 100%; height: 100%; object-fit: cover; }
+
+.scan-reticle {
+  position: absolute;
+  inset: 14%;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  border-radius: 18px;
+  mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+.camera-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  color: #f0e7e4;
+  background: #17110f;
+  margin: 0;
+}
+.camera-fallback[hidden] { display: none; }
+
+.scan-hint {
+  text-align: center;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  margin: 0.8rem 0 0;
+}
+
+/* ---------- Result panel ---------- */
+.result-card {
+  padding: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: background 0.3s, border-color 0.3s;
+}
+.result-card.match { background: var(--success-soft); border-color: var(--success); }
+.result-card.mismatch { background: var(--danger-soft); border-color: var(--danger); }
+
+.result-idle { color: var(--text-soft); }
+.result-idle[hidden], .result-body[hidden] { display: none; }
+
+.result-icon { font-size: 3.2rem; line-height: 1; margin-bottom: 0.6rem; }
+.result-card.match .result-icon, .result-card.match h2 { color: var(--success); }
+.result-card.mismatch .result-icon, .result-card.mismatch h2 { color: var(--danger); }
+
+.result-body h2 { font-size: 1.8rem; }
+#result-reason { color: var(--text-soft); margin: 0.4rem 0 1rem; }
+
+.guest-details {
+  text-align: left;
+  margin: 0 auto 1.2rem;
+  max-width: 320px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1.1rem;
+  font-size: 0.95rem;
+}
+.guest-details:empty { display: none; }
+.guest-details dt {
+  font-weight: 600;
+  color: var(--text-soft);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.guest-details dd { margin: 0 0 0.55rem; }
+.guest-details dd:last-child { margin-bottom: 0; }
+
+.result-pop { animation: resultPop 0.35s cubic-bezier(0.2, 1.2, 0.4, 1); }
+@keyframes resultPop { from { transform: scale(0.93); opacity: 0.4; } to { transform: none; opacity: 1; } }
+
+/* ---------- Manual lookup ---------- */
+.manual-card { padding: 1.4rem 1.5rem; }
+.manual-card h2 { font-size: 1.3rem; color: var(--primary); }
+.manual-form { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+.manual-form .input { flex: 1 1 220px; text-transform: uppercase; letter-spacing: 0.1em; }

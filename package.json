@@ -1,0 +1,33 @@
+{
+  "name": "wedding-guest-registration",
+  "version": "1.0.0",
+  "description": "Wedding Guest Registration System with invitation code verification and admin dashboard",
+  "main": "backend/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "migrate": "node backend/database/migrate.js",
+    "seed": "node backend/database/seed.js",
+    "test": "node scripts/smoke-test.js",
+    "setup": "npm run migrate && npm run seed"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "cookie-session": "^2.1.1",
+    "dotenv": "^17.4.2",
+    "exceljs": "^4.4.0",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.6.0",
+    "helmet": "^8.3.0",
+    "jsqr": "^1.4.0",
+    "pg": "^8.22.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "embedded-postgres": "^18.4.0-beta.17"
+  }
+}
