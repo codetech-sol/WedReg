@@ -163,7 +163,7 @@ registrationForm.addEventListener('submit', async (event) => {
   setLoading(submitBtn, true);
   try {
     const result = await api('/api/registrations', { method: 'POST', body: values });
-    renderConfirmation(values);
+    renderConfirmation(values, result.invitationCode);
     renderQrTicket(result.qr);
     showPanel('success');
   } catch (err) {
@@ -186,16 +186,18 @@ registrationForm.addEventListener('submit', async (event) => {
 /* ------------------------------------------------------------------ */
 /* Step 3 — success & printable confirmation                           */
 /* ------------------------------------------------------------------ */
-function renderConfirmation(values) {
+function renderConfirmation(values, invitationCode) {
   const dl = document.createElement('dl');
-  const add = (label, value) => {
+  const add = (label, value, { code = false } = {}) => {
     if (!value) return;
     const dt = document.createElement('dt');
     dt.textContent = label;
     const dd = document.createElement('dd');
-    dd.textContent = value; // textContent — no XSS risk
+    dd.textContent = value;
+    if (code) dd.className = 'invitation-code-value';
     dl.append(dt, dd);
   };
+  add('Invitation Code', invitationCode, { code: true });
   add('Guest', values.guestName);
   add('Email', values.guestEmail);
   add('Phone', values.guestPhone);

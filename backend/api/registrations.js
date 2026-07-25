@@ -122,6 +122,7 @@ router.post('/', async (req, res) => {
     return res.status(201).json({
       success: true,
       registrationId,
+      invitationCode: verified.code,
       qr,
       message: 'Your registration has been received successfully.',
     });

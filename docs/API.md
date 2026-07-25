@@ -77,7 +77,7 @@ on any failure nothing is saved and the code remains unused.
 
 | Status | Meaning | Response |
 |---|---|---|
-| 201 | Saved | `{ "success": true, "registrationId": 1, "qr": "data:image/png;base64,...", "message": "..." }` — `qr` is the guest's signed entry-ticket QR code |
+| 201 | Saved | `{ "success": true, "registrationId": 1, "invitationCode": "WED-DEMO-0001", "qr": "data:image/png;base64,...", "message": "..." }` — `qr` is the guest's signed entry-ticket QR code |
 | 400 | Validation failed | `{ "error": "...", "fields": { "guestEmail": "Please enter a valid email address." } }` |
 | 401 | No verified code in session | `{ "error": "Please verify your invitation code first." }` |
 | 409 | Invitation already registered | `{ "error": "This invitation has already been registered." }` |

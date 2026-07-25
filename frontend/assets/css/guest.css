@@ -164,6 +164,13 @@ legend {
 .confirmation dt { font-weight: 600; color: var(--text-soft); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
 .confirmation dd { margin: 0 0 0.6rem; }
 .confirmation dd:last-child { margin-bottom: 0; }
+.confirmation .invitation-code-value {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--primary);
+}
 
 .page-footer {
   text-align: center;
@@ -178,6 +185,10 @@ legend {
   .top-bar, .theme-toggle, .page-footer, #print-btn { display: none !important; }
   body { background: #fff !important; }
   .card { box-shadow: none; border: 1px solid #ddd; }
+  .confirmation .invitation-code-value {
+    font-size: 14pt;
+    color: #000 !important;
+  }
 }
 
 @media (max-width: 480px) {
