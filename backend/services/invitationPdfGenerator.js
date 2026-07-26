@@ -29,7 +29,19 @@ function templatePath() {
   if (process.env.INVITATION_TEMPLATE_PATH) {
     return path.resolve(process.env.INVITATION_TEMPLATE_PATH);
   }
-  return path.join(__dirname, '..', '..', layout.templateFile);
+  const rel = layout.templateFile;
+  const candidates = [
+    path.join(__dirname, '..', '..', rel),
+    path.join(process.cwd(), rel),
+  ];
+  for (const file of candidates) {
+    if (fs.existsSync(file)) return file;
+  }
+  const err = new Error(
+    `Invitation template not found. Tried: ${candidates.join('; ')}`
+  );
+  err.code = 'TEMPLATE_NOT_FOUND';
+  throw err;
 }
 
 /**
@@ -39,9 +51,6 @@ function templatePath() {
 async function loadTemplateBytes() {
   if (cachedTemplate) return cachedTemplate;
   const file = templatePath();
-  if (!fs.existsSync(file)) {
-    throw new Error(`Invitation template not found at ${file}`);
-  }
   cachedTemplate = fs.readFileSync(file);
   return cachedTemplate;
 }

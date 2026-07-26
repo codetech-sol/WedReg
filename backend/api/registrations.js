@@ -141,6 +141,13 @@ router.get('/:registrationId/invitation.pdf', async (req, res, next) => {
     if (err.code === 'NOT_FOUND') {
       return res.status(404).json({ error: 'Registration not found.' });
     }
+    if (err.code === 'TEMPLATE_NOT_FOUND') {
+      console.error('Invitation PDF template missing:', err.message);
+      return res.status(503).json({
+        error: 'Invitation template is not available on the server. Please contact the organizers.',
+      });
+    }
+    console.error('Invitation PDF generation failed:', err);
     next(err);
   }
 });

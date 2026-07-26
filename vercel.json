@@ -6,7 +6,8 @@
   ],
   "functions": {
     "api/index.js": {
-      "maxDuration": 15
+      "includeFiles": "templates/**",
+      "maxDuration": 30
     }
   }
 }

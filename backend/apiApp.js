@@ -37,6 +37,8 @@ app.use(
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         imgSrc: ["'self'", 'data:'],
         scriptSrc: ["'self'"],
+        frameSrc: ["'self'", 'blob:'],
+        childSrc: ["'self'", 'blob:'],
       },
     },
   })

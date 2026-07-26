@@ -13,6 +13,7 @@ initTheme(document.getElementById('theme-toggle'));
 
 const loginView = document.getElementById('login-view');
 const dashboardView = document.getElementById('dashboard-view');
+const authBoot = document.getElementById('auth-boot');
 
 function setLoading(btn, loading) {
   btn.classList.toggle('loading', loading);
@@ -33,6 +34,8 @@ function formatDate(value) {
 /* Boot                                                                 */
 /* ------------------------------------------------------------------ */
 (async function boot() {
+  loginView.hidden = true;
+  dashboardView.hidden = true;
   await initSession();
   try {
     const info = await api('/api/admin/login-info');
@@ -50,9 +53,11 @@ function formatDate(value) {
     /* login-info is optional */
   }
   const { authenticated } = await api('/api/admin/session');
+  authBoot.hidden = true;
   if (authenticated) enterDashboard();
   else loginView.hidden = false;
 })().catch(() => {
+  authBoot.hidden = true;
   loginView.hidden = false;
   toast('Could not reach the server.', 'error');
 });

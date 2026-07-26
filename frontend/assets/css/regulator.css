@@ -8,7 +8,16 @@
   min-height: 100vh;
   padding: 1rem;
 }
-.login-stage[hidden], .scanner-stage[hidden] { display: none; }
+.login-stage[hidden], .scanner-stage[hidden], .auth-boot[hidden] { display: none; }
+.auth-boot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
 
 .login-card { width: min(420px, 100%); padding: 2.8rem 2.4rem; text-align: center; }
 .ornament { font-size: 1.6rem; color: var(--accent); margin-bottom: 0.4rem; }

@@ -10,7 +10,17 @@
 /* Author display rules override the UA [hidden] default — restore it. */
 .login-stage[hidden],
 .dashboard[hidden],
-.table-panel[hidden] { display: none; }
+.table-panel[hidden],
+.auth-boot[hidden] { display: none; }
+.auth-boot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
 .login-card {
   width: min(420px, 100%);
   padding: 2.8rem 2.4rem;

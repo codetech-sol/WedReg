@@ -14,6 +14,7 @@ initTheme(document.getElementById('theme-toggle'));
 
 const loginView = document.getElementById('login-view');
 const scannerView = document.getElementById('scanner-view');
+const authBoot = document.getElementById('auth-boot');
 
 function setLoading(btn, loading) {
   btn.classList.toggle('loading', loading);
@@ -24,11 +25,15 @@ function setLoading(btn, loading) {
 /* Boot & login                                                         */
 /* ------------------------------------------------------------------ */
 (async function boot() {
+  loginView.hidden = true;
+  scannerView.hidden = true;
   await initSession();
   const { authenticated } = await api('/api/regulator/session');
+  authBoot.hidden = true;
   if (authenticated) enterScanner();
   else loginView.hidden = false;
 })().catch(() => {
+  authBoot.hidden = true;
   loginView.hidden = false;
   toast('Could not reach the server.', 'error');
 });

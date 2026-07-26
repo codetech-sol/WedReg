@@ -10,6 +10,9 @@ let pdfBlob = null;
 let pdfFilename = null;
 
 /** @type {string|null} */
+let pdfApiUrl = null;
+
+/** @type {string|null} */
 let blobUrl = null;
 
 function revokeBlobUrl() {
@@ -17,6 +20,12 @@ function revokeBlobUrl() {
     URL.revokeObjectURL(blobUrl);
     blobUrl = null;
   }
+}
+
+function isPdfBytes(buffer) {
+  if (!buffer || buffer.byteLength < 4) return false;
+  const bytes = new Uint8Array(buffer);
+  return bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46;
 }
 
 /**
@@ -27,6 +36,7 @@ function revokeBlobUrl() {
 export async function loadInvitationPdf(pdfUrl, filename) {
   revokeBlobUrl();
   pdfBlob = null;
+  pdfApiUrl = pdfUrl;
   pdfFilename = filename || 'Wedding Invitation.pdf';
 
   const res = await fetch(pdfUrl, { credentials: 'same-origin' });
@@ -38,30 +48,35 @@ export async function loadInvitationPdf(pdfUrl, filename) {
     throw new Error(data.error || 'Could not load your invitation PDF.');
   }
 
-  pdfBlob = await res.blob();
-  if (!pdfBlob.type.includes('pdf') && pdfBlob.size < 1000) {
+  const bytes = await res.arrayBuffer();
+  if (!isPdfBytes(bytes)) {
     throw new Error('The server did not return a valid PDF. Restart the server and try again.');
   }
+
+  pdfBlob = new Blob([bytes], { type: 'application/pdf' });
   blobUrl = URL.createObjectURL(pdfBlob);
   return blobUrl;
 }
 
 /**
  * Show PDF in an iframe preview element.
+ * Uses the same-origin API URL in the iframe (not a blob URL) so the preview
+ * works with the app's Content-Security-Policy.
  * @param {HTMLIFrameElement} iframe
  * @param {string} pdfUrl
  * @param {string} filename
  */
 export async function showInvitationPreview(iframe, pdfUrl, filename) {
-  const url = await loadInvitationPdf(pdfUrl, filename);
-  iframe.src = url;
+  await loadInvitationPdf(pdfUrl, filename);
+  iframe.src = pdfApiUrl || pdfUrl;
   iframe.hidden = false;
-  return url;
+  return pdfApiUrl || pdfUrl;
 }
 
 /** Open the browser print dialog for the generated PDF. */
 export function printInvitationPdf() {
-  if (!blobUrl) throw new Error('Invitation PDF is not loaded yet.');
+  const url = pdfApiUrl || blobUrl;
+  if (!url) throw new Error('Invitation PDF is not loaded yet.');
 
   const frame = document.createElement('iframe');
   frame.style.position = 'fixed';
@@ -70,7 +85,7 @@ export function printInvitationPdf() {
   frame.style.width = '0';
   frame.style.height = '0';
   frame.style.border = 'none';
-  frame.src = blobUrl;
+  frame.src = url;
   document.body.appendChild(frame);
 
   frame.onload = () => {
@@ -104,4 +119,5 @@ export function clearInvitationPdf() {
   revokeBlobUrl();
   pdfBlob = null;
   pdfFilename = null;
+  pdfApiUrl = null;
 }

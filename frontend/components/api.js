@@ -15,7 +15,13 @@ export async function initSession() {
  * JSON request wrapper. Throws an ApiError carrying the server's
  * status code and (optionally) per-field validation errors.
  */
-export async function api(path, { method = 'GET', body } = {}) {
+export async function api(path, { method = 'GET', body, _csrfRetried = false } = {}) {
+  // Sync CSRF token before every mutation so other tabs (e.g. admin login)
+  // cannot leave this page with a stale token in memory.
+  if (method !== 'GET') {
+    await initSession();
+  }
+
   const res = await fetch(path, {
     method,
     credentials: 'same-origin',
@@ -27,6 +33,17 @@ export async function api(path, { method = 'GET', body } = {}) {
   });
 
   const data = await res.json().catch(() => ({}));
+
+  if (
+    res.status === 403
+    && !_csrfRetried
+    && typeof data.error === 'string'
+    && data.error.toLowerCase().includes('csrf')
+  ) {
+    await initSession();
+    return api(path, { method, body, _csrfRetried: true });
+  }
+
   if (!res.ok) {
     const err = new Error(data.error || 'Request failed. Please try again.');
     err.status = res.status;
