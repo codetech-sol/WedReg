@@ -30,10 +30,11 @@
       <h1 id="login-title">Admin Dashboard</h1>
       <p class="subtitle">Sign in to manage invitations and registrations.</p>
       <!--<p class="login-hint" id="login-hint" hidden></p>-->
-      <form id="login-form" novalidate>
+      <form id="login-form" novalidate autocomplete="off">
         <div class="field">
           <label for="username">Username</label>
-          <input class="input" id="username" name="username" type="text" autocomplete="username" required />
+          <input class="input" id="username" name="username" type="text"
+                 placeholder="Enter username" autocomplete="off" required />
         </div>
         <div class="field">
           <label for="password">Password</label>
