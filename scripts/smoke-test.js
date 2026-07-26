@@ -37,7 +37,10 @@ async function req(path, { method = 'GET', body, headers = {} } = {}) {
     cookies[pair.slice(0, idx)] = pair.slice(idx + 1);
   }
   const type = res.headers.get('content-type') || '';
-  const data = type.includes('json') ? await res.json() : await res.arrayBuffer();
+  let data;
+  if (type.includes('json')) data = await res.json();
+  else if (type.includes('pdf') || path.endsWith('.pdf')) data = await res.arrayBuffer();
+  else data = await res.arrayBuffer();
   return { status: res.status, data, headers: res.headers };
 }
 
@@ -85,7 +88,16 @@ function check(name, condition, detail = '') {
   });
   check('registration saved (201)', r.status === 201 && r.data.success);
   check('QR ticket returned as PNG data URL', typeof r.data.qr === 'string' && r.data.qr.startsWith('data:image/png'));
+  check('invitation PDF URL returned', typeof r.data.invitationPdfUrl === 'string' && r.data.invitationPdfUrl.includes('/invitation.pdf'));
   const registrationId = Number(r.data.registrationId);
+
+  r = await req(r.data.invitationPdfUrl || `/api/registrations/${registrationId}/invitation.pdf`);
+  if (r.status === 200 && r.data instanceof ArrayBuffer) {
+    const pdfBytes = new Uint8Array(r.data.slice(0, 4));
+    check('invitation PDF downloadable (%PDF)', pdfBytes[0] === 0x25 && pdfBytes[1] === 0x50);
+  } else {
+    check('invitation PDF downloadable (%PDF)', false, `status ${r.status}`);
+  }
 
   r = await req('/api/invitations/verify', { method: 'POST', body: { code: 'WED-DEMO-0001' } });
   check('used code blocked (409)', r.status === 409 && /already been used/i.test(r.data.error));
@@ -109,10 +121,10 @@ function check(name, condition, detail = '') {
   r = await req('/api/admin/stats');
   check('stats blocked without login (401)', r.status === 401);
 
-  r = await req('/api/admin/login', { method: 'POST', body: { username: 'admin', password: 'wrong' } });
+  r = await req('/api/admin/login', { method: 'POST', body: { username: process.env.ADMIN_USERNAME || 'admin', password: 'wrong' } });
   check('wrong password rejected (401)', r.status === 401);
 
-  r = await req('/api/admin/login', { method: 'POST', body: { username: 'admin', password: 'admin123' } });
+  r = await req('/api/admin/login', { method: 'POST', body: { username: process.env.ADMIN_USERNAME || 'admin', password: process.env.ADMIN_PASSWORD } });
   check('admin login works', r.status === 200);
   // Session regenerated on login — get the fresh CSRF token.
   r = await req('/api/session');
@@ -184,7 +196,7 @@ function check(name, condition, detail = '') {
   cookies = {};
   r = await req('/api/session');
   csrf = r.data.csrfToken;
-  await req('/api/admin/login', { method: 'POST', body: { username: 'admin', password: 'admin123' } });
+  await req('/api/admin/login', { method: 'POST', body: { username: process.env.ADMIN_USERNAME || 'admin', password: process.env.ADMIN_PASSWORD } });
   r = await req('/api/session');
   csrf = r.data.csrfToken;
 

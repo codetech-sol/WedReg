@@ -19,7 +19,12 @@ const adminRouter = require('./api/admin');
 const regulatorRouter = require('./api/regulator');
 
 const app = express();
-const IS_PROD = process.env.NODE_ENV === 'production' || Boolean(process.env.VERCEL);
+const IS_VERCEL = Boolean(process.env.VERCEL);
+const IS_PROD = process.env.NODE_ENV === 'production' || IS_VERCEL;
+// Secure cookies only on HTTPS (Vercel) or when explicitly enabled.
+// With NODE_ENV=production on http://localhost, Secure cookies are dropped by browsers.
+const SECURE_COOKIES =
+  IS_VERCEL || String(process.env.COOKIE_SECURE || '').toLowerCase() === 'true';
 
 if (IS_PROD) app.set('trust proxy', 1);
 
@@ -49,7 +54,7 @@ app.use(
     keys: [process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex')],
     httpOnly: true,
     sameSite: 'lax',
-    secure: IS_PROD,
+    secure: SECURE_COOKIES,
     maxAge: 1000 * 60 * 60 * 2,
   })
 );

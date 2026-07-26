@@ -35,6 +35,11 @@ router.post('/login', loginLimiter, (req, res) => {
   res.json({ success: true });
 });
 
+/** Public hint so the login form can show the configured username (not secret). */
+router.get('/login-info', (req, res) => {
+  res.json({ username: process.env.ADMIN_USERNAME || 'admin' });
+});
+
 router.post('/logout', (req, res) => {
   req.session = null;
   res.json({ success: true });

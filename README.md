@@ -19,6 +19,9 @@ filtering, bulk code generation, and formatted **Excel export**.
 - Signed **QR entry ticket** on the success card — encodes the invitation code
   and guest details, HMAC-signed so it cannot be forged.
 - Dark mode with system-preference detection.
+- **Personalised wedding invitation PDF** after registration — uses the official
+  `templates/invitation-template.pdf` master file with guest name, QR code, and
+  invitation code drawn on; preview, print, and download.
 
 **Regulator dashboard** (`/regulator`)
 - Password-protected door check-in station for ushers/security.
@@ -78,6 +81,8 @@ filtering, bulk code generation, and formatted **Excel export**.
 │   │   ├── codes.js           # Secure invitation code generator
 │   │   ├── qr.js              # Signed QR ticket issue + verification
 │   │   └── audit.js           # Audit log writer
+│   └── services/
+│       └── invitationPdfGenerator.js  # Personalised PDF from master template
 │   └── database/
 │       ├── db.js              # PostgreSQL (Supabase) connection pool
 │       ├── migrate.js         # Schema + indexes (idempotent)
@@ -94,6 +99,8 @@ filtering, bulk code generation, and formatted **Excel export**.
 │   └── dev-postgres.js        # Local Postgres for development (no Docker needed)
 ├── docs/
 │   └── API.md                 # Full API documentation
+├── templates/
+│   └── invitation-template.pdf  # Master wedding invitation PDF (unchanged artwork)
 ├── vercel.json                # Vercel routing + function config
 └── .env.example               # Environment variable template
 ```

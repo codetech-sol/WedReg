@@ -131,45 +131,63 @@ legend {
 }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 
-/* ---------- QR entry ticket ---------- */
-.qr-ticket {
-  margin: 0 auto 1.6rem;
-  padding: 1.2rem 1.2rem 0.9rem;
-  background: #fff;
-  border: 1.5px dashed var(--accent);
-  border-radius: var(--radius-sm);
-  width: fit-content;
-  animation: fadeSlideIn 0.5s 0.9s ease both;
+.success-intro {
+  margin-bottom: 0.5rem !important;
 }
-.qr-ticket[hidden] { display: none; }
-.qr-ticket img { display: block; margin: 0 auto; }
-.qr-note {
-  margin: 0.7rem 0 0;
-  font-size: 0.85rem;
-  color: var(--text-soft);
-  max-width: 240px;
-}
-[data-theme='dark'] .qr-note { color: #6b5d59; }
 
-.confirmation {
-  margin: 0 0 1.6rem;
-  padding: 1.1rem 1.3rem;
-  background: var(--success-soft);
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  font-size: 0.95rem;
-  text-align: left;
+.invitation-pdf-section {
+  width: 100%;
+  margin: 1.5rem 0 0;
+  text-align: center;
 }
-.confirmation:empty { display: none; }
-.confirmation dt { font-weight: 600; color: var(--text-soft); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
-.confirmation dd { margin: 0 0 0.6rem; }
-.confirmation dd:last-child { margin-bottom: 0; }
-.confirmation .invitation-code-value {
-  font-family: 'Consolas', 'Courier New', monospace;
+
+.invitation-pdf-section h2 {
+  font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 600;
   letter-spacing: 0.12em;
-  color: var(--primary);
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin: 0 0 1rem;
+}
+
+.invitation-preview-loading {
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  margin: 0 0 1rem;
+}
+
+.invitation-pdf-preview {
+  width: 100%;
+  max-width: 520px;
+  height: min(68vh, 720px);
+  margin: 0 auto;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.invitation-pdf-preview[hidden] {
+  display: none;
+}
+
+.invitation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+  margin-top: 1.25rem;
+}
+
+.invitation-actions .btn {
+  min-width: 10rem;
+}
+
+.success-panel {
+  width: min(920px, 100%) !important;
+  max-width: 100%;
 }
 
 .page-footer {
@@ -180,16 +198,7 @@ legend {
   letter-spacing: 0.08em;
 }
 
-/* ---------- Print: only the confirmation ---------- */
-@media print {
-  .top-bar, .theme-toggle, .page-footer, #print-btn { display: none !important; }
-  body { background: #fff !important; }
-  .card { box-shadow: none; border: 1px solid #ddd; }
-  .confirmation .invitation-code-value {
-    font-size: 14pt;
-    color: #000 !important;
-  }
-}
+/* Print styles live in /invitation/invitation.css */
 
 @media (max-width: 480px) {
   .panel { padding: 2.2rem 1.4rem; }

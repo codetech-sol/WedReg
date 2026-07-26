@@ -6,12 +6,20 @@
  *   Inserts the registration AND marks the invitation as used inside a
  *   single database transaction — if anything fails, everything rolls back
  *   and the invitation stays unused.
+ *
+ * GET /api/registrations/invitation.pdf
+ *   Returns the personalised invitation PDF for the registration just
+ *   completed in this session (lastRegistrationId).
  */
 const express = require('express');
 const pool = require('../database/db');
 const { validateRegistration } = require('../utils/validators');
 const { logEvent } = require('../utils/audit');
 const { generateQrDataUrl } = require('../utils/qr');
+const {
+  generateInvitationPdf,
+  invitationFilename,
+} = require('../services/invitationPdfGenerator');
 
 const router = express.Router();
 
@@ -69,6 +77,74 @@ async function registerTransaction(data) {
   }
 }
 
+/**
+ * Load registration row and build personalised invitation PDF bytes.
+ * @param {number} registrationId
+ * @returns {Promise<{ pdf: Buffer, guestName: string }>}
+ */
+async function buildPdfForRegistration(registrationId) {
+  const { rows } = await pool.query(
+    `SELECT id, invitation_code, guest_name, has_plus_one, plus_one_name
+     FROM registrations WHERE id = $1`,
+    [registrationId]
+  );
+  const reg = rows[0];
+  if (!reg) {
+    const err = new Error('NOT_FOUND');
+    err.code = 'NOT_FOUND';
+    throw err;
+  }
+
+  let qr = null;
+  try {
+    qr = await generateQrDataUrl({
+      registrationId: Number(reg.id),
+      invitationCode: reg.invitation_code,
+      guestName: reg.guest_name,
+    });
+  } catch (qrErr) {
+    console.error('QR generation for invitation PDF failed:', qrErr.message);
+  }
+
+  const pdf = await generateInvitationPdf({
+    registrationId: Number(reg.id),
+    invitationCode: reg.invitation_code,
+    guestName: reg.guest_name,
+    hasPlusOne: Boolean(reg.has_plus_one),
+    plusOneName: reg.plus_one_name,
+    qr,
+  });
+
+  return { pdf, guestName: reg.guest_name };
+}
+
+router.get('/:registrationId/invitation.pdf', async (req, res, next) => {
+  try {
+    const registrationId = Number(req.params.registrationId);
+    if (!Number.isInteger(registrationId) || registrationId < 1) {
+      return res.status(400).json({ error: 'Invalid registration id.' });
+    }
+    if (Number(req.session.lastRegistrationId) !== registrationId) {
+      return res.status(403).json({
+        error: 'This invitation is not available for your session.',
+      });
+    }
+
+    const { pdf, guestName } = await buildPdfForRegistration(registrationId);
+    const filename = invitationFilename(guestName);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.send(pdf);
+  } catch (err) {
+    if (err.code === 'NOT_FOUND') {
+      return res.status(404).json({ error: 'Registration not found.' });
+    }
+    next(err);
+  }
+});
+
 router.post('/', async (req, res) => {
   const verified = req.session.verifiedInvitation;
   if (!verified) {
@@ -97,8 +173,11 @@ router.post('/', async (req, res) => {
       browser: (req.get('User-Agent') || '').slice(0, 400),
     });
 
-    // Invitation is consumed — clear it so the form can never reopen.
-    delete req.session.verifiedInvitation;
+    const csrfToken = req.session.csrfToken;
+    req.session = {
+      csrfToken,
+      lastRegistrationId: registrationId,
+    };
 
     logEvent('registration_success', {
       code: verified.code,
@@ -106,8 +185,6 @@ router.post('/', async (req, res) => {
       detail: `registration #${registrationId}`,
     });
 
-    // Signed entry-ticket QR for the success card. If rendering ever fails,
-    // the registration itself must still succeed — QR is best-effort.
     let qr = null;
     try {
       qr = await generateQrDataUrl({
@@ -124,10 +201,11 @@ router.post('/', async (req, res) => {
       registrationId,
       invitationCode: verified.code,
       qr,
+      invitationPdfUrl: `/api/registrations/${registrationId}/invitation.pdf`,
+      invitationFilename: invitationFilename(value.guestName),
       message: 'Your registration has been received successfully.',
     });
   } catch (err) {
-    // 23505 = Postgres unique_violation (registrations.invitation_id UNIQUE)
     if (err.code === 'ALREADY_REGISTERED' || err.code === '23505') {
       delete req.session.verifiedInvitation;
       logEvent('registration_duplicate', { code: verified.code, ip: req.ip });

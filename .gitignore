@@ -3,5 +3,15 @@ node_modules/
 .pgdata/
 .vercel
 public/
+test-invitation-output.pdf
+test-invitation-*.pdf
+test-cal*.pdf
+test-gy-*.pdf
+test-calibration.pdf
+wedding-invite-*.png
+frontend/admin.html
+frontend/regulator.html
+frontend/admin/
+frontend/regulator/
 backend/database/data/
 *.log

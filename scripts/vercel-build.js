@@ -8,6 +8,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { publishPages } = require('./publish-pages');
 
 function copyDir(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
@@ -19,20 +20,6 @@ function copyDir(src, dest) {
   }
 }
 
-function publishPage(publicDir, pagesDir, name) {
-  const src = path.join(pagesDir, `${name}.html`);
-  if (name === 'index') {
-    fs.copyFileSync(src, path.join(publicDir, 'index.html'));
-    return;
-  }
-  // /admin.html and /regulator.html
-  fs.copyFileSync(src, path.join(publicDir, `${name}.html`));
-  // /admin/ and /regulator/ via index.html inside a folder
-  const dir = path.join(publicDir, name);
-  fs.mkdirSync(dir, { recursive: true });
-  fs.copyFileSync(src, path.join(dir, 'index.html'));
-}
-
 const root = path.join(__dirname, '..');
 const publicDir = path.join(root, 'public');
 const frontendDir = path.join(root, 'frontend');
@@ -40,10 +27,7 @@ const pagesDir = path.join(frontendDir, 'pages');
 
 fs.rmSync(publicDir, { recursive: true, force: true });
 copyDir(frontendDir, publicDir);
-
-publishPage(publicDir, pagesDir, 'index');
-publishPage(publicDir, pagesDir, 'admin');
-publishPage(publicDir, pagesDir, 'regulator');
+publishPages(publicDir, pagesDir);
 
 console.log('✔ Built public/ for Vercel');
 console.log('  Pages: /  /admin.html  /admin/  /regulator.html  /regulator/');

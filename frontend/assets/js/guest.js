@@ -2,11 +2,16 @@
  * Guest flow controller:
  *   Step 1 — verify invitation code (server-side check via API)
  *   Step 2 — registration form with optional Plus One
- *   Step 3 — success screen with printable confirmation
+ *   Step 3 — success screen with personalised invitation PDF
  */
 import { api, initSession } from '/components/api.js';
 import { toast } from '/components/toast.js';
 import { initTheme } from '/components/theme.js';
+import {
+  showInvitationPreview,
+  printInvitationPdf,
+  downloadInvitationPdf,
+} from '/assets/js/invitationPdf.js';
 
 initTheme(document.getElementById('theme-toggle'));
 
@@ -45,9 +50,6 @@ function clearFieldErrors(form) {
   form.querySelectorAll('[aria-invalid]').forEach((el) => el.setAttribute('aria-invalid', 'false'));
 }
 
-/* ------------------------------------------------------------------ */
-/* Boot: restore session state (already-verified guests skip step 1)   */
-/* ------------------------------------------------------------------ */
 (async function boot() {
   try {
     const session = await initSession();
@@ -67,9 +69,6 @@ function greet(guestName) {
   if (!nameInput.value) nameInput.value = guestName;
 }
 
-/* ------------------------------------------------------------------ */
-/* Step 1 — invitation code verification                               */
-/* ------------------------------------------------------------------ */
 const verifyForm = document.getElementById('verify-form');
 const verifyBtn = document.getElementById('verify-btn');
 
@@ -98,9 +97,6 @@ verifyForm.addEventListener('submit', async (event) => {
   }
 });
 
-/* ------------------------------------------------------------------ */
-/* Step 2 — registration form                                          */
-/* ------------------------------------------------------------------ */
 const registrationForm = document.getElementById('registration-form');
 const submitBtn = document.getElementById('submit-btn');
 const plusOneCheckbox = document.getElementById('hasPlusOne');
@@ -118,7 +114,6 @@ plusOneCheckbox.addEventListener('change', () => {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE_RE = /^\+?[\d\s\-()]{7,20}$/;
 
-/** Client-side validation mirrors the server rules (server is authoritative). */
 function validateClientSide(values) {
   const errors = {};
   if (!values.guestName) errors.guestName = 'Full name is required.';
@@ -135,7 +130,7 @@ function validateClientSide(values) {
   return errors;
 }
 
-let submitting = false; // guards against double-clicks / double submits
+let submitting = false;
 
 registrationForm.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -163,15 +158,37 @@ registrationForm.addEventListener('submit', async (event) => {
   setLoading(submitBtn, true);
   try {
     const result = await api('/api/registrations', { method: 'POST', body: values });
-    renderConfirmation(values, result.invitationCode);
-    renderQrTicket(result.qr);
     showPanel('success');
+
+    const previewFrame = document.getElementById('invitation-pdf-preview');
+    const previewLoading = document.getElementById('invitation-preview-loading');
+    previewLoading.hidden = false;
+    previewFrame.hidden = true;
+    previewLoading.textContent = 'Generating your invitation PDF… this may take a moment.';
+    document.getElementById('print-invitation-btn').disabled = true;
+    document.getElementById('download-invitation-btn').disabled = true;
+
+    try {
+      await showInvitationPreview(
+        previewFrame,
+        result.invitationPdfUrl || `/api/registrations/${result.registrationId}/invitation.pdf`,
+        result.invitationFilename
+      );
+      previewLoading.hidden = true;
+      document.getElementById('print-invitation-btn').disabled = false;
+      document.getElementById('download-invitation-btn').disabled = false;
+      toast('Your personalised invitation is ready!', 'success');
+    } catch (pdfErr) {
+      previewLoading.textContent = pdfErr.message || 'Could not load invitation preview.';
+      document.getElementById('print-invitation-btn').disabled = true;
+      document.getElementById('download-invitation-btn').disabled = true;
+      toast(pdfErr.message || 'Registration saved, but the invitation PDF could not be loaded.', 'error');
+    }
   } catch (err) {
     if (err.fields) {
       Object.entries(err.fields).forEach(([field, message]) => showFieldError(field, message));
     }
     if (err.status === 409 || err.status === 401) {
-      // Invitation consumed or session expired — send them back to step 1.
       toast(err.message, 'error');
       setTimeout(() => window.location.reload(), 2600);
     } else {
@@ -183,36 +200,23 @@ registrationForm.addEventListener('submit', async (event) => {
   }
 });
 
-/* ------------------------------------------------------------------ */
-/* Step 3 — success & printable confirmation                           */
-/* ------------------------------------------------------------------ */
-function renderConfirmation(values, invitationCode) {
-  const dl = document.createElement('dl');
-  const add = (label, value, { code = false } = {}) => {
-    if (!value) return;
-    const dt = document.createElement('dt');
-    dt.textContent = label;
-    const dd = document.createElement('dd');
-    dd.textContent = value;
-    if (code) dd.className = 'invitation-code-value';
-    dl.append(dt, dd);
-  };
-  add('Invitation Code', invitationCode, { code: true });
-  add('Guest', values.guestName);
-  add('Email', values.guestEmail);
-  add('Phone', values.guestPhone);
-  if (values.hasPlusOne) add('Plus One', values.plusOneName);
-  add('Registered', new Date().toLocaleString());
-  const confirmation = document.getElementById('confirmation');
-  confirmation.replaceChildren(dl);
-}
+document.getElementById('print-invitation-btn').addEventListener('click', () => {
+  try {
+    printInvitationPdf();
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+});
 
-/** Show the signed entry-ticket QR issued by the server. */
-function renderQrTicket(qrDataUrl) {
-  if (!qrDataUrl) return; // registration succeeded even if QR rendering failed
-  const ticket = document.getElementById('qr-ticket');
-  document.getElementById('qr-image').src = qrDataUrl;
-  ticket.hidden = false;
-}
+document.getElementById('download-invitation-btn').addEventListener('click', () => {
+  try {
+    downloadInvitationPdf();
+    toast('Invitation PDF downloaded.', 'success');
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+});
 
-document.getElementById('print-btn').addEventListener('click', () => window.print());
+document.getElementById('home-btn').addEventListener('click', () => {
+  window.location.href = '/';
+});

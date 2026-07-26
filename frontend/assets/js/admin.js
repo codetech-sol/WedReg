@@ -34,6 +34,21 @@ function formatDate(value) {
 /* ------------------------------------------------------------------ */
 (async function boot() {
   await initSession();
+  try {
+    const info = await api('/api/admin/login-info');
+    const hint = document.getElementById('login-hint');
+    const usernameInput = document.getElementById('username');
+    if (info.username && usernameInput) {
+      usernameInput.value = info.username;
+      usernameInput.placeholder = info.username;
+      if (hint) {
+        hint.textContent = `Username: ${info.username} (from server configuration)`;
+        hint.hidden = false;
+      }
+    }
+  } catch {
+    /* login-info is optional */
+  }
   const { authenticated } = await api('/api/admin/session');
   if (authenticated) enterDashboard();
   else loginView.hidden = false;
