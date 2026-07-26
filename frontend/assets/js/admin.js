@@ -8,8 +8,10 @@
 import { api, initSession } from '/components/api.js';
 import { toast } from '/components/toast.js';
 import { initTheme } from '/components/theme.js';
+import { initPasswordToggles } from '/components/passwordToggle.js';
 
 initTheme(document.getElementById('theme-toggle'));
+initPasswordToggles(document);
 
 const loginView = document.getElementById('login-view');
 const dashboardView = document.getElementById('dashboard-view');

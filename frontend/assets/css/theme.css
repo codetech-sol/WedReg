@@ -129,6 +129,39 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; }
 }
 .input[aria-invalid='true'] { border-color: var(--danger); }
 
+.password-field {
+  position: relative;
+}
+.password-field .input {
+  padding-right: 3rem;
+}
+.password-toggle {
+  position: absolute;
+  right: 0.55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+.password-toggle:hover {
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+.password-toggle:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+
 .field-error {
   display: none;
   margin-top: 0.35rem;
