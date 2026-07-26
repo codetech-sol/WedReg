@@ -272,7 +272,7 @@ const registrationsTable = createTable({
   tbody: document.getElementById('reg-tbody'),
   paginationEl: document.getElementById('reg-pagination'),
   defaultSort: 'registered_at',
-  columns: 8,
+  columns: 7,
   extraParams: () => (regPlusOne.value !== '' ? { plusOne: regPlusOne.value } : {}),
   renderRow(row) {
     const tr = document.createElement('tr');
@@ -282,7 +282,6 @@ const registrationsTable = createTable({
     tr.appendChild(cell(row.invitation_code, 'mono'));
     tr.appendChild(cell(row.has_plus_one ? row.plus_one_name : '—'));
     tr.appendChild(cell(row.has_plus_one ? row.plus_one_phone : '—', 'mono'));
-    tr.appendChild(cell(row.has_plus_one ? row.plus_one_id : '—', 'mono'));
     tr.appendChild(cell(formatDate(row.registered_at)));
     return tr;
   },

@@ -240,11 +240,10 @@ router.get('/export', async (req, res, next) => {
       { header: 'Invitation Code', key: 'invitation_code', width: 20 },
       { header: 'Guest Name', key: 'guest_name', width: 28 },
       { header: 'Email', key: 'guest_email', width: 32 },
-      // Phone & ID columns use text format so leading zeros survive.
+      // Phone columns use text format so leading zeros survive.
       { header: 'Phone', key: 'guest_phone', width: 18, style: { numFmt: '@' } },
       { header: 'Plus One', key: 'plus_one_name', width: 28 },
       { header: 'Plus One Phone', key: 'plus_one_phone', width: 18, style: { numFmt: '@' } },
-      { header: 'Plus One ID', key: 'plus_one_id', width: 22, style: { numFmt: '@' } },
       { header: 'Registered At', key: 'registered_at', width: 22 },
     ];
 
@@ -256,7 +255,6 @@ router.get('/export', async (req, res, next) => {
         guest_phone: row.guest_phone ? String(row.guest_phone) : '',
         plus_one_name: row.has_plus_one ? row.plus_one_name : '—',
         plus_one_phone: row.has_plus_one && row.plus_one_phone ? String(row.plus_one_phone) : '',
-        plus_one_id: row.has_plus_one && row.plus_one_id ? String(row.plus_one_id) : '',
         registered_at: formatDate(row.registered_at),
       });
     }

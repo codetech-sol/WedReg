@@ -83,7 +83,6 @@ function check(name, condition, detail = '') {
       hasPlusOne: true,
       plusOneName: 'Plus Person',
       plusOnePhone: '0700111222',
-      plusOneId: '0012345678',
     },
   });
   check('registration saved (201)', r.status === 201 && r.data.success);
@@ -108,14 +107,14 @@ function check(name, condition, detail = '') {
   });
   check('re-submission without verified session rejected (401)', r.status === 401);
 
-  console.log('— Plus-one required-ID validation —');
+  console.log('— Plus-one registration without ID —');
   await req('/api/invitations/verify', { method: 'POST', body: { code: 'WED-TEST-0002' } });
   r = await req('/api/registrations', {
     method: 'POST',
-    body: { guestName: 'T', guestEmail: 't@t.com', hasPlusOne: true, plusOneName: 'P' },
+    body: { guestName: 'Test Guest', guestEmail: 't@t.com', hasPlusOne: true, plusOneName: 'Plus Person' },
   });
-  check('missing plus-one ID rejected (400)', r.status === 400 && r.data.fields?.plusOneId);
-  check('invitation NOT marked used after failed save', (await req('/api/invitations/verify', { method: 'POST', body: { code: 'WED-TEST-0002' } })).status === 200);
+  check('plus-one registration without ID saved (201)', r.status === 201 && r.data.success);
+  check('invitation marked used after plus-one save', (await req('/api/invitations/verify', { method: 'POST', body: { code: 'WED-TEST-0002' } })).status === 409);
 
   console.log('— Admin auth —');
   r = await req('/api/admin/stats');
@@ -132,15 +131,14 @@ function check(name, condition, detail = '') {
 
   console.log('— Admin data —');
   r = await req('/api/admin/stats');
-  check('stats correct', r.data.totalRegistrations === 1 && r.data.usedInvitations === 1 && r.data.withPlusOne === 1, JSON.stringify(r.data));
+  check('stats correct', r.data.totalRegistrations === 2 && r.data.usedInvitations === 2 && r.data.withPlusOne === 2, JSON.stringify(r.data));
 
   r = await req('/api/admin/invitations?search=DEMO&status=used');
   check('invitation search + filter', r.data.total === 1 && r.data.rows[0].invitation_code === 'WED-DEMO-0001');
 
   r = await req('/api/admin/registrations?sort=guest_name&dir=asc');
-  check('registrations list + sort', r.data.rows.length === 1 && r.data.rows[0].guest_name === 'Demo Guest');
+  check('registrations list + sort', r.data.rows.length === 2 && r.data.rows[0].guest_name === 'Demo Guest');
   check('whitespace trimmed on save', r.data.rows[0].guest_name === 'Demo Guest');
-  check('leading zero preserved in plus-one ID', r.data.rows[0].plus_one_id === '0012345678');
 
   r = await req('/api/admin/invitations/generate', { method: 'POST', body: { count: 3, guestName: 'Bulk Test' } });
   check('bulk code generation (3 codes)', r.status === 201 && r.data.created.length === 3);
@@ -201,7 +199,7 @@ function check(name, condition, detail = '') {
   csrf = r.data.csrfToken;
 
   r = await req('/api/admin/registrations', { method: 'DELETE' });
-  check('delete all registrations', r.status === 200 && r.data.deleted === 1);
+  check('delete all registrations', r.status === 200 && r.data.deleted === 2);
 
   r = await req('/api/admin/invitations', { method: 'DELETE' });
   check('delete all invitations (cascades)', r.status === 200 && r.data.deleted > 0);

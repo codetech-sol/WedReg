@@ -107,7 +107,7 @@ plusOneCheckbox.addEventListener('change', () => {
   if (plusOneCheckbox.checked) {
     document.getElementById('plusOneName').focus();
   } else {
-    ['plusOneName', 'plusOnePhone', 'plusOneId'].forEach((id) => showFieldError(id, ''));
+    ['plusOneName', 'plusOnePhone'].forEach((id) => showFieldError(id, ''));
   }
 });
 
@@ -125,7 +125,6 @@ function validateClientSide(values) {
     if (!values.plusOneName) errors.plusOneName = "Please enter your plus one's full name.";
     if (values.plusOnePhone && !PHONE_RE.test(values.plusOnePhone))
       errors.plusOnePhone = 'Please enter a valid phone number.';
-    if (!values.plusOneId) errors.plusOneId = 'National ID / passport number is required.';
   }
   return errors;
 }
@@ -144,7 +143,6 @@ registrationForm.addEventListener('submit', async (event) => {
     hasPlusOne: plusOneCheckbox.checked,
     plusOneName: document.getElementById('plusOneName').value.trim(),
     plusOnePhone: document.getElementById('plusOnePhone').value.trim(),
-    plusOneId: document.getElementById('plusOneId').value.trim(),
   };
 
   const errors = validateClientSide(values);

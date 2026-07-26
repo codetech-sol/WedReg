@@ -31,7 +31,6 @@ function validateRegistration(body) {
   const hasPlusOne = body.hasPlusOne === true || body.hasPlusOne === 'true';
   const plusOneName = trim(body.plusOneName);
   const plusOnePhone = trim(body.plusOnePhone);
-  const plusOneId = trim(body.plusOneId);
 
   if (!guestName) errors.guestName = 'Full name is required.';
   else if (guestName.length > 120) errors.guestName = 'Name is too long (max 120 characters).';
@@ -48,9 +47,6 @@ function validateRegistration(body) {
 
     if (plusOnePhone && !PHONE_RE.test(plusOnePhone))
       errors.plusOnePhone = 'Please enter a valid phone number.';
-
-    if (!plusOneId) errors.plusOneId = 'National ID / passport number is required for your plus one.';
-    else if (plusOneId.length > 40) errors.plusOneId = 'ID number is too long (max 40 characters).';
   }
 
   return {
@@ -63,7 +59,7 @@ function validateRegistration(body) {
       hasPlusOne,
       plusOneName: hasPlusOne ? plusOneName : null,
       plusOnePhone: hasPlusOne && plusOnePhone ? plusOnePhone : null,
-      plusOneId: hasPlusOne ? plusOneId : null,
+      plusOneId: null,
     },
   };
 }
